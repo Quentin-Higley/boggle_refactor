@@ -254,155 +254,27 @@ exports.remove_player = (req, res, callback) => {
         });
 };
 
-// ready player
+// update player status
 exports.ready_player = (req, res, callback) => {
     let data = req.body;
     let lobby_id = data.lobby_id;
     let user_id = data.user_id;
+    let ready = data.ready;
     let response;
 
-    // check if lobby exists
-    Lobby.findOne({ lobby_id: lobby_id, active: true })
+    // check if lobby exists and then update player status
+    Lobby.findOneAndUpdate(
+        { lobby_id: lobby_id, active: true },
+        { $set: { "players.$[elem].ready": ready } },
+        { arrayFilters: [{ "elem.user_id": user_id }] }
+    )
         .then((lobby) => {
-            if (!lobby) {
-                response = {
-                    success: false,
-                    message: "Lobby does not exist.",
-                };
-                res.status(400).send(response);
-                callback(false);
-                return;
-            }
-
-            // ready player
-            let players = lobby.players;
-            for (let i = 0; i < players.length; i++) {
-                if (players[i].user_id === user_id) {
-                    players[i].ready = true;
-                    lobby.players = players;
-                    lobby.save();
-                    break;
-                }
-            }
-
-            // update player in player collection
-            Player.findOneAndUpdate(
-                { user_id: user_id, lobby_id: lobby_id },
-                { ready: false },
-                { new: true }
-            )
-                .then((player) => {
-                    if (!player) {
-                        response = {
-                            success: false,
-                            message: "Player does not exist.",
-                        };
-                        res.status(400).send(response);
-                        callback(false);
-                        return;
-                    }
-                })
-                .catch((err) => {
-                    res.status(500).send({
-                        message:
-                            err.message ||
-                            "Some error occurred while readying player.",
-                    });
-                    callback(false);
-                });
-
-            // return success
-            response = {
-                success: true,
-                message: "Player readied successfully.",
-            };
-            res.json(response);
-            callback(true);
+            console.log(lobby);
         })
         .catch((err) => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while readying player.",
-            });
-            callback(false);
+            console.log(err);
         });
 };
-
-// unready player
-exports.unready_player = (req, res, callback) => {
-    let data = req.body;
-    let lobby_id = data.lobby_id;
-    let user_id = data.user_id;
-    let response;
-
-    // check if lobby exists
-    Lobby.findOne({ lobby_id: lobby_id, active: true })
-        .then((lobby) => {
-            if (!lobby) {
-                response = {
-                    success: false,
-                    message: "Lobby does not exist.",
-                };
-                res.status(400).send(response);
-                callback(false);
-                return;
-            }
-
-            // unready player
-            let players = lobby.players;
-            for (let i = 0; i < players.length; i++) {
-                if (players[i].user_id === user_id) {
-                    players[i].ready = false;
-                    lobby.players = players;
-                    lobby.save();
-                    break;
-                }
-            }
-
-            // update player in player collection
-            Player.findOneAndUpdate(
-                { user_id: user_id, lobby_id: lobby_id },
-                { ready: false },
-                { new: true }
-            )
-                .then((player) => {
-                    if (!player) {
-                        response = {
-                            success: false,
-                            message: "Player does not exist.",
-                        };
-                        res.status(400).send(response);
-                        callback(false);
-                        return;
-                    }
-                })
-                .catch((err) => {
-                    res.status(500).send({
-                        message:
-                            err.message ||
-                            "Some error occurred while unreadying player.",
-                    });
-                    callback(false);
-                });
-
-            // return success
-            response = {
-                success: true,
-                message: "Player unreadied successfully.",
-            };
-            res.json(response);
-            callback(true);
-        })
-        .catch((err) => {
-            res.status(500).send({
-                message:
-                    err.message ||
-                    "Some error occurred while unreadying player.",
-            });
-            callback(false);
-        });
-};
-
 // check if lobby is ready
 exports.start_game = (req, res, callback) => {
     let data = req.body;

@@ -110,11 +110,19 @@ app.post("/lobby", (req, res) => {
 //     // remove_player(req, res, (result) => {});
 // });
 app.post("/lobby/ready", (req, res) => {
-    // ready_player(req, res, (result) => {});
+    console.log("ready player");
+    console.log(req.body);
+    ready_player(req, res, (result) => {
+        console.log(result);
+    });
 });
-// app.post("/lobby/unready", (req, res) => {
-//     // unready_player(req, res, (result) => {});
-// });
+app.post("/lobby/unready", (req, res) => {
+    console.log("unready player");
+    console.log(req.body);
+    unready_player(req, res, (result) => {
+        console.log(result);
+    });
+});
 // app.get("/lobby/start", (req, res) => {
 //     // start_game(req, res, (result) => {});
 // });
