@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import CountdownTimer from "./countdown_timer.js";
 
 import Navbar from "./navbar.js";
 
@@ -17,7 +16,7 @@ export default function LobbyPregame() {
     const username = localStorage.getItem("username");
     const [players, setPlayers] = useState([]);
     const [allReady, setAllReady] = useState(false);
-
+    const allReadyRef = useRef(false);
     // on load get the lobby data
     // store the players in the state
     useEffect(() => {
@@ -57,9 +56,20 @@ export default function LobbyPregame() {
             user_id: user_id,
             username: username,
         };
-        functions.post_call("/lobby/ready", req, (res) => {
-            console.log(res);
-        });
+        // get current player ready status
+        let player = players.find((player) => player.user_id === user_id);
+        let ready = player.ready;
+        console.log(ready);
+        if (ready) {
+            req.ready = false;
+            functions.post_call("/lobby/ready", req, (res) => {
+                console.log(res.data.lobby.players);
+            });
+        } else {
+            req.ready = true;
+            functions.post_call("/lobby/ready", req, (res) => {});
+        }
+        // if player is not ready, set ready
     }
     // poll the server for ready status every 1 second
     function get_status() {
@@ -70,17 +80,53 @@ export default function LobbyPregame() {
         functions.post_call("/lobby", req, (res) => {
             console.log(res.data.lobby.players);
             setPlayers(res.data.lobby.players);
+            if (allPlayersReady(res.data.lobby.players)) {
+                allReadyRef.current = true;
+            }
         });
     }
-    functions.polling(10000, get_status, allReady, () => {
-        console.log("all ready");
-        setAllReady(true);
-    });
-    // if all players are ready, start countdown to game start
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            get_status();
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    function allPlayersReady(players) {
+        // check if all players are ready
+        // min 2 players
+        if (players.length < 1) {
+            return false;
+        }
+
+        return players.every((player) => player.ready);
+    }
 
     // let players leave the lobby
+    function leaveLobby() {
+        let req = {
+            lobby_id: lobby_id,
+            user_id: user_id,
+            username: username,
+        };
+        functions.post_call("/lobby/leave", req, (res) => {
+            console.log(res.data);
+            if (res.data.success) {
+                localStorage.removeItem("lobby_id");
+                navigate("/lobby");
+            }
+        });
+    }
 
+    // if all players are ready, start countdown to game start
     // once the game starts, redirect to the game page
+    useEffect(() => {
+        if (allReadyRef.current) {
+            console.log("all players ready");
+            // start countdown
+        }
+    }, [allReadyRef.current]);
 
     return (
         <div
@@ -88,11 +134,16 @@ export default function LobbyPregame() {
             className="container"
         >
             <Navbar />
+            <CountdownTimer
+                seconds={3}
+                url="/game"
+            />
             <div id="lobby-pregame-content">
                 <h1>Lobby Pregame</h1>
                 <PlayerList />
             </div>
             <button onClick={readyClick}> ready </button>
+            <button onClick={leaveLobby}>leave</button>
         </div>
     );
 }
