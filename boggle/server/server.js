@@ -21,13 +21,11 @@ const {
     add_player,
     remove_player,
     ready_player,
-    unready_player,
-    start_game,
 } = require("./routes/route_lobby");
 const {
-    create_game,
+    add_players,
     get_game,
-    update_game,
+    get_scores,
     check_word,
 } = require("./routes/route_game");
 
@@ -106,9 +104,6 @@ app.post("/lobby", (req, res) => {
         // console.log(result);
     });
 });
-// app.post("/lobby/remove", (req, res) => {
-//     // remove_player(req, res, (result) => {});
-// });
 app.post("/lobby/ready", (req, res) => {
     console.log("ready player");
     console.log(req.body);
@@ -116,30 +111,30 @@ app.post("/lobby/ready", (req, res) => {
         console.log(result);
     });
 });
-app.post("/lobby/unready", (req, res) => {
-    console.log("unready player");
+app.post("/game/add", (req, res) => {
+    console.log("add players to game");
     console.log(req.body);
-    unready_player(req, res, (result) => {
+    add_players(req, res, (result) => {
         console.log(result);
     });
 });
-// app.get("/lobby/start", (req, res) => {
-//     // start_game(req, res, (result) => {});
-// });
-
-// // game routes
-// app.get("/create_game", (req, res) => {
-//     // create_game(req, res, (result) => {});
-// });
-// app.get("/game", (req, res) => {
-//     console.log("get game");
-//     // get_game(req, res, (result) => {});
-// });
-// app.post("/game/update", (req, res) => {
-//     // update_game(req, res, (result) => {});
-// });
-// app.post("/game/check_word", (req, res) => {
-//     // check_word(req, res, (result) => {});
-// });
+app.post("/game", (req, res) => {
+    console.log("get game");
+    get_game(req, res, (result) => {
+        console.log(result);
+    });
+});
+app.post("/game/check_word", (req, res) => {
+    console.log("check word");
+    console.log(req.body);
+    check_word(req, res, (result) => {
+        console.log(result);
+    });
+});
+app.post("/game/scores", (req, res) => {
+    get_scores(req, res, (result) => {
+        console.log(result);
+    });
+});
 
 app.listen(4000, () => console.log("Server started on http://localhost:4000"));

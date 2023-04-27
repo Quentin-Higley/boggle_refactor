@@ -1,6 +1,12 @@
 const Lobby = require("../models/lobby_model");
 const Game = require("../models/game_model");
 const Player = require("../models/player_model");
+const BoggleBoard = require("./game_object/game_board");
+const BoggleGame = require("./game_object/game_logic");
+// Game attributes
+// game_id: String same as lobby_id
+// board: String
+// players: Array of Player objects
 
 // create lobby
 exports.create_lobby = (req, res, callback) => {
@@ -22,12 +28,37 @@ exports.create_lobby = (req, res, callback) => {
     // create new lobby
     Lobby.create(new_lobby)
         .then((lobby) => {
-            response = {
-                success: true,
-                message: "Lobby created successfully.",
+            // create game
+            let boardGen = new BoggleBoard(data.board_size);
+            // let board = boardGen.board;
+            let board = boardGen.generate_board();
+            const new_game = {
+                game_id: data.lobby_id,
+                board: board,
+                players: [],
             };
-            res.json(response);
-            callback(true);
+            console.log(new_game);
+            Game.create(new_game)
+                .then((game) => {
+                    response = {
+                        success: true,
+                        message: "Lobby created successfully.",
+                    };
+                    callback(true);
+                    res.json(response);
+                    return;
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).send({
+                        message:
+                            err.message ||
+                            "Some error occurred while creating the game.",
+                    });
+                    callback(false);
+                    res.json(response);
+                    return;
+                });
         })
         .catch((err) => {
             res.status(500).send({

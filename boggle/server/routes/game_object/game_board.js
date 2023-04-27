@@ -1,7 +1,6 @@
 class Board {
     constructor(board_size = 4) {
         this.board_size = board_size;
-        this.board = "";
         this.base_letter_frequency = {
             A: 8.12,
             B: 1.49,
@@ -30,7 +29,6 @@ class Board {
             Y: 2.11,
             Z: 0.07,
         };
-        this.generate_board();
     }
 
     normal_distribution(mean = 0, std_dev = 1) {
@@ -52,14 +50,21 @@ class Board {
         let letters = [];
         let size = this.board_size * this.board_size;
         // create new frequency map
-        let new_freqs = this.letter_frequency;
+        let new_freqs = this.base_letter_frequency;
         let vowel_penalty = 1.2;
         let vowels = ["A", "E", "I", "O"];
+        let min_freq = 0.5;
+        let max_freq = 6;
         for (let letter in new_freqs) {
-            if (new_freqs[letter] < min_freq) new_freqs[letter] = min_freq;
-            if (new_freqs[letter] > max_freq) new_freqs[letter] = max_freq;
+            if (new_freqs[letter] < min_freq) {
+                new_freqs[letter] += min_freq;
+            }
+            if (new_freqs[letter] > max_freq) {
+                new_freqs[letter] = max_freq;
+            }
+            // new_freqs[letter] = Math.abs(
             new_freqs[letter] = Math.abs(
-                this.normal_distribution(new_letter[letter], 0.3)
+                this.normal_distribution(new_freqs[letter], 0.5)
             );
             if (vowels.includes(letter)) {
                 new_freqs[letter] -= vowel_penalty;
@@ -75,7 +80,7 @@ class Board {
 
         letters = letters.toString().replace(/,/g, "");
         letters = letters.slice(0, size);
-        this.board = letters;
+        return letters;
     }
 }
 
