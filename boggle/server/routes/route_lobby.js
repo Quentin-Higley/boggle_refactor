@@ -352,3 +352,37 @@ exports.start_game = (req, res, callback) => {
             callback(false);
         });
 };
+
+exports.set_inactive = (req, res, callback) => {
+    let data = req.body;
+    let lobby_id = data.lobby_id;
+    let response;
+
+    // check if lobby exists
+    Lobby.findOneAndUpdate({ lobby_id: lobby_id }, { active: 0 })
+        .then((lobby) => {
+            if (!lobby) {
+                response = {
+                    success: false,
+                    message: "Lobby does not exist.",
+                };
+                res.status(400).send(response);
+                callback(false);
+                return;
+            }
+
+            response = {
+                success: true,
+                message: "Lobby set to inactive.",
+            };
+            res.json(response);
+            callback(true);
+        })
+        .catch((err) => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while starting game.",
+            });
+            callback(false);
+        });
+};

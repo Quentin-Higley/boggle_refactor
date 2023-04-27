@@ -17,6 +17,10 @@ export default function LobbyPregame() {
     const [players, setPlayers] = useState([]);
     const [allReady, setAllReady] = useState(false);
     const allReadyRef = useRef(false);
+    const [coundown, setCoundown] = useState("");
+    const [waitForReady, setWaitForReady] = useState(
+        "Waiting For All Players To Ready up."
+    );
     // on load get the lobby data
     // store the players in the state
     useEffect(() => {
@@ -127,6 +131,13 @@ export default function LobbyPregame() {
         if (allReadyRef.current) {
             console.log("all players ready");
             // start countdown
+            setCoundown(
+                <CountdownTimer
+                    seconds={3}
+                    url={"/game"}
+                />
+            );
+            setWaitForReady("Game will Start In : ");
         }
     }, [allReadyRef.current]);
 
@@ -136,14 +147,10 @@ export default function LobbyPregame() {
             className="container"
         >
             <Navbar />
-            <CountdownTimer
-                seconds={3}
-                url="/game"
-                allReady={allReady}
-                restfunction={() => {
-                    console.log("rest function add players to game");
-                }}
-            />
+            <div>
+                {waitForReady}
+                {coundown}
+            </div>
             <div id="lobby-pregame-content">
                 <h1>Lobby Pregame</h1>
                 <PlayerList />

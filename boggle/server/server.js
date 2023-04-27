@@ -21,6 +21,7 @@ const {
     add_player,
     remove_player,
     ready_player,
+    set_inactive,
 } = require("./routes/route_lobby");
 const {
     add_players,
@@ -133,6 +134,12 @@ app.post("/game/check_word", (req, res) => {
 });
 app.post("/game/scores", (req, res) => {
     get_scores(req, res, (result) => {
+        console.log(result);
+    });
+});
+
+app.post("/lobby/inactive", (req, res) => {
+    set_inactive(req, res, (result) => {
         console.log(result);
     });
 });
