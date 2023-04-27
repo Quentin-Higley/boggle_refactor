@@ -16,6 +16,10 @@
     display: inline-block;
 }
 
+a {
+    text-decoration: none;
+}
+
 /* default classes */
 .container {
     position: absolute;
