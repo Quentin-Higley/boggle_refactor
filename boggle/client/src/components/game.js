@@ -116,7 +116,7 @@ function Game() {
             <Navbar />
             <CountdownTimer
                 seconds={60}
-                url="/lobby"
+                url="/results"
             />
             <ScoreTable />
             <div id="game-content">

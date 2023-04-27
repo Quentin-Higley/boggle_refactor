@@ -18,6 +18,13 @@ export default function ResultsScreen() {
             console.log(res);
             setPlayers(res.data.players);
         });
+        functions.post_call(
+            "/lobby/inactive",
+            { lobby_id: lobby_id },
+            (res) => {
+                console.log(res);
+            }
+        );
     }, []);
     //create a list of players with their scores order by score
     const PlayerList = () => {
