@@ -14,6 +14,10 @@ import LoginAccount from "./components/account_login.js";
 import LobbyHome from "./components/lobby_home.js";
 import LobbyCreate from "./components/lobby_create.js";
 import LobbyPregame from "./components/lobby_pregame.js";
+// Game page components
+import Game from "./components/game.js";
+// Results page components
+import ResultsScreen from "./components/results_screen.js";
 
 function App() {
     axios.defaults.withCredentials = true;
@@ -45,6 +49,17 @@ function App() {
             <Route
                 path="/pregame"
                 element={<LobbyPregame />}
+            />
+            {/* Game route */}
+            <Route
+                path="/game"
+                element={<Game />}
+            />
+            {/* Results route */}
+            <Route
+                path="/results"
+                // element={<LobbyHome />}
+                element={<ResultsScreen />}
             />
         </Routes>
     );

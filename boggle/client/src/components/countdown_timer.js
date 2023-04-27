@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function CountdownTimer({ seconds, url }) {
+export default function CountdownTimer({ seconds, url, restfunction }) {
     const [time, setTime] = useState(seconds);
     const navigate = useNavigate();
 
@@ -11,6 +11,9 @@ export default function CountdownTimer({ seconds, url }) {
                 setTime(time - 1);
             }, 1000);
         } else {
+            if (restfunction) {
+                restfunction();
+            }
             navigate(url);
         }
     }, [time]);

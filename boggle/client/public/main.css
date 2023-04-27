@@ -101,4 +101,52 @@
     padding: 10px;
 }
 
-/* account create items */
+.game-board-row {
+    display: inline-block;
+}
+
+#game-board-container {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 0px; */
+    background-color: #ddd;
+    padding: 10px;
+    border-radius: 10px;
+}
+#game-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#game-content table {
+    width: 500px;
+}
+#game-wrapper {
+    display: inline-block;
+    width: 500px;
+}
+.game-board-tile {
+    font-size: 24px;
+    font-weight: bold;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.game-board-tile:hover {
+    background-color: #eee;
+}
+
+.game-board-tile.selected {
+    background-color: #4caf50;
+    color: #fff;
+}

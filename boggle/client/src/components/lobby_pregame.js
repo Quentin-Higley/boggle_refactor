@@ -96,11 +96,12 @@ export default function LobbyPregame() {
     function allPlayersReady(players) {
         // check if all players are ready
         // min 2 players
+        let allPlyrsRdy = true;
         if (players.length < 1) {
-            return false;
+            allPlyrsRdy = false;
         }
-
-        return players.every((player) => player.ready);
+        allPlyrsRdy = players.every((player) => player.ready);
+        return allPlyrsRdy;
     }
 
     // let players leave the lobby
@@ -122,6 +123,7 @@ export default function LobbyPregame() {
     // if all players are ready, start countdown to game start
     // once the game starts, redirect to the game page
     useEffect(() => {
+        console.log(allReadyRef.current);
         if (allReadyRef.current) {
             console.log("all players ready");
             // start countdown
@@ -137,6 +139,10 @@ export default function LobbyPregame() {
             <CountdownTimer
                 seconds={3}
                 url="/game"
+                allReady={allReady}
+                restfunction={() => {
+                    console.log("rest function add players to game");
+                }}
             />
             <div id="lobby-pregame-content">
                 <h1>Lobby Pregame</h1>
